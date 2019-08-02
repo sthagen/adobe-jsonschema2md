@@ -9,7 +9,7 @@ These tools have been introduced by Adobe to document Adobe's Experience Data Mo
 ## Requirements
 
 - `npm` version 3.10.8 or up
-- `node` v6 or up
+- `node` v8 or up
 
 ## Example Output
 
@@ -19,41 +19,41 @@ Using the schemas in [`examples/schemas`](examples/schemas), the output in [`exa
 
 ```bash
 # clone this project
-$ git clone git@github.com:adobe/jsonschema2md.git
-
-# install dependencies
-$ cd jsonschema2md && npm install
+$ npm install -g @adobe/jsonschema2md
 
 # show usage information
-$ node cli.js
+$ jsonschema2md
 
 # run task
-$ node cli.js -d examples/schemas -o examples/docs
+# leave out the -v "06", when you have draft-07 schemas
+$ jsonschema2md -d examples/schemas -o examples/docs -v "06"
 # generated output for whole folder is written to ./examples/docs
 ```
+
 ## JSON Schema Draft Versions
 
 `jsonschema2md` assumes `draft-07` by default. If your schemas are not on `draft-07`, you can specify the draft version using the `-v` or `--draft` flag.
 
 ```bash
 # run against JSON Schema Draft 04
-$ node cli.js -d examples/schemas -o examples/docs -v 04
+$ jsonschema2md -d examples/schemas -o examples/docs -v 04
 ```
 
 ```bash
 # run against JSON Schema Draft 06
-$ node cli.js -d examples/schemas -o examples/docs -v 06
+$ jsonschema2md -d examples/schemas -o examples/docs -v 06
 ```
 
-### Installing the `jsonschema2md` Command Line Tools
-
-The JSON Schema Markdown tools also includes a convenient `jsonschema2md` command line tool that can be installed using:
+## Text in Templates
+Each text which is not provided by the JSON Schema is loaded from an i18n file. With i18n parameter you can change the location of the i18n folder and load your own text file. The folder must contain an locales folder and in this folder there should be an en.json file.
 
 ```bash
-$ npm link
+# run against JSON Schema Draft 06
+$ jsonschema2md -d examples/schemas -o examples/docs -v 06 -i temp/myFiles
 ```
 
-The command line arguments are identical between the `jsonschema2md` binary and the `cli.js` node script.
+
+
 
 ## Using JSON Schema Markdown Tools from `npm`
 
@@ -61,7 +61,7 @@ You can conveniently use the JSON Schema Markdown Tools from `npm`. This makes i
 
 ```json
   "devDependencies": {
-    "jsonschema2md": "^1.0.6"
+    "@adobe/jsonschema2md": "^1.0.6"
   }
 ```
 
@@ -73,7 +73,7 @@ Then add the following to the `"scripts"` section of your `package.json` and ada
 }
 ```
 
-If you run `npm install` before running `npm run prepare`, `npm` will install the `jsonschema2md` in a `node_modules/.bin` path, even if you did not install the JSON Schema Markdown beforehand.
+If you run `npm install` before running `npm run prepare`, `npm` will install the `@adobe/jsonschema2md` in a `node_modules/.bin` path, even if you did not install the JSON Schema Markdown beforehand.
 
 ## Tests
 
