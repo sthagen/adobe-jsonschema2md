@@ -1,3 +1,33 @@
+## [4.0.7](https://github.com/adobe/jsonschema2md/compare/v4.0.6...v4.0.7) (2020-01-14)
+
+
+### Bug Fixes
+
+* **markdown:** increase robustness when using format as a property name ([cda0bec](https://github.com/adobe/jsonschema2md/commit/cda0bec)), closes [#198](https://github.com/adobe/jsonschema2md/issues/198)
+
+## [4.0.6](https://github.com/adobe/jsonschema2md/compare/v4.0.5...v4.0.6) (2020-01-14)
+
+
+### Bug Fixes
+
+* **markdown:** catch error when using `title` as a property name ([b4b8855](https://github.com/adobe/jsonschema2md/commit/b4b8855))
+
+## [4.0.5](https://github.com/adobe/jsonschema2md/compare/v4.0.4...v4.0.5) (2020-01-14)
+
+
+### Bug Fixes
+
+* **slugger:** fix slugger crash due to title property ([4f0ab31](https://github.com/adobe/jsonschema2md/commit/4f0ab31)), closes [#196](https://github.com/adobe/jsonschema2md/issues/196)
+
+## [4.0.4](https://github.com/adobe/jsonschema2md/compare/v4.0.3...v4.0.4) (2020-01-14)
+
+
+### Bug Fixes
+
+* **cli:** do not exit after creating readme.md ([cb7d012](https://github.com/adobe/jsonschema2md/commit/cb7d012))
+* **cli:** make the -n or --no-readme option work again ([3c63c03](https://github.com/adobe/jsonschema2md/commit/3c63c03))
+* **loader:** guard against endless wrapping ([dd1f7f6](https://github.com/adobe/jsonschema2md/commit/dd1f7f6)), closes [#194](https://github.com/adobe/jsonschema2md/issues/194)
+
 ## [4.0.3](https://github.com/adobe/jsonschema2md/compare/v4.0.2...v4.0.3) (2020-01-09)
 
 
