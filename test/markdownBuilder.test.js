@@ -58,7 +58,22 @@ merged type ([Not true](not.md))
 
 not
 
--   [True](not-true.md "check type definition")`;
+*   [True](not-true.md "check type definition")`;
+  });
+});
+
+describe('Testing Markdown Builder: nullable', () => {
+  let results;
+
+  before(async () => {
+    const schemas = await loadschemas('nullable');
+    const builder = build({ header: false });
+    results = builder(schemas);
+  });
+
+  it('Nullable Array Type Schema looks OK', () => {
+    assertMarkdown(results.array)
+      .fuzzy`| [sampleProp](#sampleprop) | \`string\` | Required | can be null | [Type Array Repro](array-properties-sample-property.md "http://example.com/type-array-repro.json#/properties/sampleProp") |`;
   });
 });
 
@@ -73,12 +88,12 @@ describe('Testing Markdown Builder: title', () => {
 
   it('Meta Schema looks OK', () => {
     assertMarkdown(results.meta)
-      .fuzzy`defined in: [Meta](meta-definitions-meta-properties-title.md "https&#x3A;//ns.adobe.com/helix/pipeline/meta#/definitions/meta/properties/title")`;
+      .fuzzy`defined in: [Meta](meta-definitions-meta-properties-title.md "https://ns.adobe.com/helix/pipeline/meta#/definitions/meta/properties/title")`;
   });
 
   it('Title Schema looks OK', () => {
-    assertMarkdown(results['meta-definitions-meta-properties'])
-      .fuzzy`properties Type`;
+    assertMarkdown(results['meta-definitions-meta-properties-title'])
+      .fuzzy`## title Type\n\n\`string\`\n`;
   });
 });
 
@@ -243,7 +258,7 @@ describe('Testing Markdown Builder: types', () => {
 
   it('Undefined Schema looks OKish', () => {
     assertMarkdown(results.undefined)
-      .has('paragraph > text[value="unknown ("]');
+      .has('paragraph > text[value="unknown"]');
   });
 
   it('Wrong Schema looks OKish', () => {
@@ -285,21 +300,28 @@ describe('Testing Markdown Builder: arrays', () => {
   it('Tuple Schema looks OK', () => {
     assertMarkdown(results.tuple)
       .fuzzy`
--   is optional
--   Type: an array where each item follows the corresponding schema in the following list:
+*   is optional
+
+*   Type: an array where each item follows the corresponding schema in the following list:
 
     1.  [Positive Integer](tuple-properties-tuple-items-positive-integer.md "check type definition")
+
     2.  [Negative Integer](tuple-properties-tuple-items-negative-integer.md "check type definition")
+
     3.  and all following items must follow the schema: [Zero](tuple-properties-tuple-zero.md "check type definition")
--   cannot be null
--   defined in: [Arrays](tuple-properties-tuple.md "https&#x3A;//example.com/schemas/arrays#/properties/tuple")
+
+*   cannot be null
+
+*   defined in: [Arrays](tuple-properties-tuple.md "https://example.com/schemas/arrays#/properties/tuple")
 
 ### tuple Type
 
 an array where each item follows the corresponding schema in the following list:
 
 1.  [Positive Integer](tuple-properties-tuple-items-positive-integer.md "check type definition")
+
 2.  [Negative Integer](tuple-properties-tuple-items-negative-integer.md "check type definition")
+
 3.  and all following items must follow the schema: [Zero](tuple-properties-tuple-zero.md "check type definition")`;
   });
 });
@@ -330,7 +352,6 @@ describe('Testing Markdown Builder: stringformats', () => {
   });
 });
 
-
 describe('Testing Markdown Builder: readme-1', () => {
   let results;
 
@@ -358,10 +379,13 @@ Reference this group by using
       .fuzzy`
 \`bar\`
 
--   is optional
--   Type: \`string\`
--   cannot be null
--   defined in: [Abstract](abstract-defs-second-properties-bar.md "https&#x3A;//example.com/schemas/abstract#/$defs/second/properties/bar")
+*   is optional
+
+*   Type: \`string\`
+
+*   cannot be null
+
+*   defined in: [Abstract](abstract-defs-second-properties-bar.md "https://example.com/schemas/abstract#/$defs/second/properties/bar")
 
 #### bar Type
 
@@ -385,5 +409,33 @@ Reference this group by using
       .contains('> This should be here')
       .contains('living a simple life')
       .contains('# Simple Schema');
+  });
+});
+
+describe('Testing Markdown Builder: Skip properties', () => {
+  let schemas;
+
+  before(async () => {
+    schemas = await loadschemas('skipproperties');
+  });
+
+  it('Skipped properties exist', () => {
+    const builder = build({});
+    const results = builder(schemas);
+
+    assertMarkdown(results.complete)
+      .contains('### bar Type')
+      .contains('| Property          | Type      | Required |')
+      .contains('*   defined in: [Complete JSON Schema]');
+  });
+
+  it('Skips the expected properties', () => {
+    const builder = build({ skipproperties: ['typesection', 'definedinfact', 'proptable'] });
+    const results = builder(schemas);
+
+    assertMarkdown(results.complete)
+      .doesNotContain('### bar Type')
+      .doesNotContain('| Property          | Type      | Required |')
+      .doesNotContain('-   defined in: [Complete JSON Schema]');
   });
 });

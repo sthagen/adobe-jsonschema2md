@@ -1,7 +1,7 @@
 # Untitled string in Custom Schema
 
 ```txt
-https://example.com/schemas/custom#/allOf/2/properties/bar
+https://example.com/schemas/custom#/definitions/second/properties/bar
 ```
 
 A unique identifier given to every addressable thing.

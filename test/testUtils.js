@@ -15,17 +15,25 @@ const stringify = require('remark-stringify');
 const inspect = require('unist-util-inspect');
 const select = require('unist-util-select');
 const path = require('path');
+const gfm = require('remark-gfm');
 const readdirp = require('readdirp');
 const { loader } = require('../lib/schemaProxy');
 const traverse = require('../lib/traverseSchema');
 
 function assertMarkdown(node) {
-  const processor = unified().use(stringify);
+  const processor = unified()
+    .use(gfm)
+    .use(stringify);
   try {
     const result = processor.stringify(node);
     const tester = {};
     tester.contains = (str) => {
       assert.ok(result.indexOf(str) >= 0, `Markdown output does not contain search string "${str}"
+${result}`);
+      return tester;
+    };
+    tester.doesNotContain = (str) => {
+      assert.ok(result.indexOf(str) < 0, `Markdown output contains search string "${str}"
 ${result}`);
       return tester;
     };
@@ -52,7 +60,7 @@ ${inspect(node)}`);
       return tester;
     };
     tester.fuzzy = (expr) => {
-      const matches = expr.filter(line => result.indexOf(line) >= 0);
+      const matches = expr.filter((line) => result.indexOf(line) >= 0);
       if (matches.length < expr.length) {
         assert.equal(result, expr.join(''));
       }
@@ -69,7 +77,6 @@ async function loadschemas(dir) {
   const schemaloader = loader();
   const schemadir = path.resolve(__dirname, 'fixtures', dir);
   const schemas = await readdirp.promise(schemadir, { fileFilter: '*.schema.json' });
-
 
   return traverse(schemas
     .map(({ fullPath }) => schemaloader(
