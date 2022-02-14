@@ -11,11 +11,11 @@
  */
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
-const assert = require('assert');
-const { assertMarkdown, loadschemas } = require('./testUtils');
+import assert from 'assert';
+import { assertMarkdown, traverseSchemas } from './testUtils.js';
 
-const build = require('../lib/readmeBuilder');
-const { loader } = require('../lib/schemaProxy');
+import build from '../lib/readmeBuilder.js';
+import loader from '../lib/schemaProxy.js';
 
 describe('Testing Readme Builder', () => {
   it('Readme Builder is a function', () => {
@@ -28,7 +28,7 @@ describe('Testing Readme Builder', () => {
   });
 
   it('Readme Builder builds a README for type', async () => {
-    const schemas = await loadschemas('type');
+    const schemas = await traverseSchemas('type');
     const builder = build({ readme: true });
     const result = builder(schemas);
 
@@ -38,7 +38,7 @@ describe('Testing Readme Builder', () => {
   });
 
   it('Readme Builder builds a medium README for multiple Schemas', async () => {
-    const schemas = await loadschemas('readme-1');
+    const schemas = await traverseSchemas('readme-1');
     const builder = build({ readme: true });
     const result = builder(schemas);
 
@@ -59,7 +59,7 @@ describe('Testing Readme Builder', () => {
     const builder = build({ readme: true });
     const schemaloader = loader();
     const schemas = [
-      schemaloader({
+      schemaloader('example.schema.json', {
         type: 'object',
         title: 'Test Schema',
         description: 'Not much',
@@ -76,7 +76,7 @@ describe('Testing Readme Builder', () => {
             title: 'An Array',
           },
         },
-      }, 'example.schema.json'),
+      }),
     ];
 
     const result = builder(schemas);

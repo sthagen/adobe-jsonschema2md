@@ -11,15 +11,15 @@
  */
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
-const { assertMarkdown, loadschemas } = require('./testUtils');
+import { assertMarkdown, traverseSchemas } from './testUtils.js';
 
-const build = require('../lib/markdownBuilder');
+import build from '../lib/markdownBuilder.js';
 
 describe('Testing Markdown Builder: content', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('content');
+    const schemas = await traverseSchemas('content');
     const builder = build({ header: false });
     results = builder(schemas);
   });
@@ -45,7 +45,7 @@ describe('Testing Markdown Builder: not', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('not');
+    const schemas = await traverseSchemas('not');
     const builder = build({ header: false });
     results = builder(schemas);
   });
@@ -66,7 +66,7 @@ describe('Testing Markdown Builder: nullable', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('nullable');
+    const schemas = await traverseSchemas('nullable');
     const builder = build({ header: false });
     results = builder(schemas);
   });
@@ -81,7 +81,7 @@ describe('Testing Markdown Builder: title', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('title');
+    const schemas = await traverseSchemas('title');
     const builder = build({ header: false });
     results = builder(schemas);
   });
@@ -101,7 +101,7 @@ describe('Testing Markdown Builder: type', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('type');
+    const schemas = await traverseSchemas('type');
     const builder = build({ header: false });
     results = builder(schemas);
   });
@@ -123,7 +123,7 @@ describe('Testing Markdown Builder: format', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('format');
+    const schemas = await traverseSchemas('format');
     const builder = build({ header: false });
     results = builder(schemas);
   });
@@ -150,7 +150,7 @@ describe('Testing Markdown Builder: YAML examples', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('format');
+    const schemas = await traverseSchemas('format');
     const builder = build({ header: false, exampleFormat: 'yaml' });
     results = builder(schemas);
   });
@@ -171,7 +171,7 @@ describe('Testing Markdown Builder: enums', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('enums');
+    const schemas = await traverseSchemas('enums');
     const builder = build({ header: true, includeProperties: ['foo', 'bar'] });
     results = builder(schemas);
   });
@@ -195,7 +195,7 @@ describe('Testing Markdown Builder: null', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('null');
+    const schemas = await traverseSchemas('null');
     const builder = build({ header: true });
     results = builder(schemas);
   });
@@ -212,7 +212,7 @@ describe('Testing Markdown Builder: additionalprops', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('additionalprops');
+    const schemas = await traverseSchemas('additionalprops');
     const builder = build({ header: true });
     results = builder(schemas);
   });
@@ -236,7 +236,7 @@ describe('Testing Markdown Builder: types', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('types');
+    const schemas = await traverseSchemas('types');
     const builder = build({ header: true });
     results = builder(schemas);
   });
@@ -271,7 +271,7 @@ describe('Testing Markdown Builder: identifiable', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('identifiable');
+    const schemas = await traverseSchemas('identifiable');
     const builder = build({ header: true });
     results = builder(schemas);
   });
@@ -287,7 +287,7 @@ describe('Testing Markdown Builder: arrays', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('arrays');
+    const schemas = await traverseSchemas('arrays');
     const builder = build({ header: true });
     results = builder(schemas);
   });
@@ -330,7 +330,7 @@ describe('Testing Markdown Builder: stringformats', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('stringformats');
+    const schemas = await traverseSchemas('stringformats');
     const builder = build({ header: true });
     results = builder(schemas);
   });
@@ -339,13 +339,13 @@ describe('Testing Markdown Builder: stringformats', () => {
     assertMarkdown(results.simpletypes)
       .contains('maximum (exclusive)')
       .contains('minimum (exclusive)')
-      .fuzzy`### string_pattern Constraints
+      .fuzzy`### string\\_pattern Constraints
 
-**pattern**: the string must match the following regular expression: ${null}
+**pattern**: the string must match the following regular expression:${null}
 \`\`\`regexp
 ^ba.$
 `
-      .fuzzy`### string_date Constraints
+      .fuzzy`### string\\_date Constraints
 
 **date time**: the string must be a date time string, according to [RFC 3339, section 5.6](https://tools.ietf.org/html/rfc3339 "check the specification")
 `;
@@ -356,7 +356,7 @@ describe('Testing Markdown Builder: readme-1', () => {
   let results;
 
   before(async () => {
-    const schemas = await loadschemas('readme-1');
+    const schemas = await traverseSchemas('readme-1');
     const builder = build({ header: true, links: { abstract: 'fooabstract.html' } });
     results = builder(schemas);
   });
@@ -416,7 +416,7 @@ describe('Testing Markdown Builder: Skip properties', () => {
   let schemas;
 
   before(async () => {
-    schemas = await loadschemas('skipproperties');
+    schemas = await traverseSchemas('skipproperties');
   });
 
   it('Skipped properties exist', () => {

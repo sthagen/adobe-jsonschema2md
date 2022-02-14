@@ -11,16 +11,19 @@
  */
 /* eslint-env mocha */
 
-const path = require('path');
-const fs = require('fs-extra');
-const assert = require('assert');
-const { loader } = require('../lib/schemaProxy');
-const { assertMarkdown } = require('./testUtils');
-const readme = require('../lib/readmeBuilder');
-const markdown = require('../lib/markdownBuilder');
-const traverse = require('../lib/traverseSchema');
-const { writeSchema } = require('../lib/writeSchema');
+import path from 'path';
+import fs from 'fs-extra';
+import assert from 'assert';
+import { fileURLToPath } from 'url';
+import loader from '../lib/schemaProxy.js';
+import { assertMarkdown } from './testUtils.js';
+import readme from '../lib/readmeBuilder.js';
+import markdown from '../lib/markdownBuilder.js';
+import traverse from '../lib/traverseSchema.js';
+import writeSchema from '../lib/writeSchema.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 describe('Integration Test: Cyclic References', () => {
   let one;
   let two;
@@ -41,9 +44,9 @@ describe('Integration Test: Cyclic References', () => {
     const myloader = loader();
 
     console.log('Loading Schemas');
-    proxiedone = myloader(one, path.resolve(__dirname, 'fixtures', 'cyclic', 'one.schema.json'));
-    proxiedtwo = myloader(two, path.resolve(__dirname, 'fixtures', 'cyclic', 'two.schema.json'));
-    proxiedthree = myloader(three, path.resolve(__dirname, 'fixtures', 'cyclic', 'three.schema.json'));
+    proxiedone = myloader(path.resolve(__dirname, 'fixtures', 'cyclic', 'one.schema.json'), one);
+    proxiedtwo = myloader(path.resolve(__dirname, 'fixtures', 'cyclic', 'two.schema.json'), two);
+    proxiedthree = myloader(path.resolve(__dirname, 'fixtures', 'cyclic', 'three.schema.json'), three);
 
     console.log('Traversing Schemas');
 

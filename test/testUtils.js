@@ -9,18 +9,22 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const assert = require('assert');
-const unified = require('unified');
-const stringify = require('remark-stringify');
-const inspect = require('unist-util-inspect');
-const select = require('unist-util-select');
-const path = require('path');
-const gfm = require('remark-gfm');
-const readdirp = require('readdirp');
-const { loader } = require('../lib/schemaProxy');
-const traverse = require('../lib/traverseSchema');
+import assert from 'assert';
+import fs from 'fs-extra';
+import { unified } from 'unified';
+import stringify from 'remark-stringify';
+import { inspect } from 'unist-util-inspect';
+import { select } from 'unist-util-select';
+import path from 'path';
+import gfm from 'remark-gfm';
+import readdirp from 'readdirp';
+import { fileURLToPath } from 'url';
+import loader from '../lib/schemaProxy.js';
+import traverse from '../lib/traverseSchema.js';
 
-function assertMarkdown(node) {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+export function assertMarkdown(node) {
   const processor = unified()
     .use(gfm)
     .use(stringify);
@@ -51,12 +55,12 @@ ${result}`);
       return tester;
     };
     tester.has = (selector) => {
-      assert.ok(select.select(selector, node), `Markdown AST does not include node matching selector "${selector}"
+      assert.ok(select(selector, node), `Markdown AST does not include node matching selector "${selector}"
 ${inspect(node)}`);
       return tester;
     };
     tester.equals = (selector, value) => {
-      assert.deepStrictEqual(select.select(selector, node), value);
+      assert.deepStrictEqual(select(selector, node), value);
       return tester;
     };
     tester.fuzzy = (expr) => {
@@ -73,16 +77,19 @@ ${inspect(node)}`);
   return null;
 }
 
-async function loadschemas(dir) {
-  const schemaloader = loader();
-  const schemadir = path.resolve(__dirname, 'fixtures', dir);
-  const schemas = await readdirp.promise(schemadir, { fileFilter: '*.schema.json' });
+export async function loadSchemas(dir) {
+  const schemaDir = path.resolve(__dirname, 'fixtures', dir);
+  const schemas = await readdirp.promise(schemaDir, { fileFilter: '*.schema.json' });
 
-  return traverse(schemas
-    .map(({ fullPath }) => schemaloader(
-      // eslint-disable-next-line global-require, import/no-dynamic-require
-      require(fullPath), fullPath,
-    )));
+  return schemas.map((schema) => ({
+    fileName: schema.basename,
+    fullPath: schema.fullPath,
+  }));
 }
 
-module.exports = { assertMarkdown, loadschemas };
+export async function traverseSchemas(dir) {
+  const schemas = await loadSchemas(dir);
+  const schemaloader = loader();
+
+  return traverse(schemas.map(({ fullPath }) => schemaloader(fullPath, fs.readJSONSync(fullPath))));
+}
